@@ -16,7 +16,8 @@ function cacheResponse(req, res, next) {
   const sendJson = res.json.bind(res);
   res.json = (body) => {
     if (res.statusCode >= 200 && res.statusCode < 300) {
-      cache.set(key, { body, expiresAt: Date.now() + CACHE_TTL_MS });
+      const createdAt = Date.now();
+      cache.set(key, { body, createdAt, expiresAt: createdAt + CACHE_TTL_MS });
     }
     return sendJson(body);
   };
@@ -31,4 +32,4 @@ function invalidateCacheOnSuccess(req, res, next) {
   next();
 }
 
-module.exports = { cacheResponse, invalidateCacheOnSuccess };
+module.exports = { cacheResponse, invalidateCacheOnSuccess, cache, CACHE_TTL_MS };
