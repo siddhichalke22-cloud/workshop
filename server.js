@@ -5,6 +5,9 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
+app.get('/', (req, res) => {
+  res.json({ message: 'Product API is running', products: '/products' });
+});
 app.use('/products', productRoutes);
 
 app.use((error, req, res, next) => {
