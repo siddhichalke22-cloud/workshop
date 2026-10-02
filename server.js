@@ -1,41 +1,22 @@
-const fs  = require('fs/promises');
-const path = require('path');
-
-
 const express = require('express');
+const productRoutes = require('./routes/productRoutes');
+
 const app = express();
-const port = 3000;
-const filepath = path.join(__dirname, "db.json");
+const port = process.env.PORT || 3000;
 
-async function readfile(){
+app.use(express.json());
+app.use('/products', productRoutes);
 
-   let getdata =  await fs.readFile(filepath,"utf-8")
-   return JSON.parse(getdata)
-}
-async function setfuntion(){
-    let key = req.url;
-    let value = 
-    await new Promise((resolve,reject)=>{
-    setTimeout(resolve, 1500);}
-    )
-    return await readfile();
-}
-app.get('/', async (req, res) => {
-    // let id = Number(req.params.id);
-
-try{
-    let data = await setfuntion();
-    // let result = data.find((item)=>
-        // item.id === id)
-        
-    
-    res.json(data);
-}
-catch(err){
-    console.log(err);
-}
+app.use((error, req, res, next) => {
+  console.error(error);
+  if (res.headersSent) return next(error);
+  res.status(500).json({ error: 'Internal server error' });
 });
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
-});
+if (require.main === module) {
+  app.listen(port, () => {
+    console.log(`Product API listening on port ${port}`);
+  });
+}
+
+module.exports = app;
